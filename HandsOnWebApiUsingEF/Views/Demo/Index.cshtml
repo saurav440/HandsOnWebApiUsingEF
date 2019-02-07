@@ -1,0 +1,141 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+@Scripts.Render("~/bundles/jquery")
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            type: 'Get',
+            url: '/GetAll',
+            datatype: 'application/json',
+            success: function (data) {
+                $.each(data, function (i, obj) {
+                    var r = '<tr><td>' + obj.Eid + '</td><td>' + obj.Ename + '</td><td>' + obj.Desig + '</td><td>' + obj.JoinDate + '</td><td>' + obj.Salary + '</td></tr>';
+                    $('#t1').append(r)
+                })
+            },
+            error: function (xhr) {
+                console.log(xhr.error)
+            }
+        })
+        $("#btnsearch").click(function () {
+            let eid = $("#Eid").val();
+            $.ajax({
+                type: 'Get',
+                url: '/Employee/Search/'+eid,
+                datatype: 'application/json',
+                success: function (item) {
+                    $("#Ename").val(item.Ename);
+                    $("#Desig").val(item.Desig);
+                    $("#JoinDate").val(item.JoinDate);
+                    $("#Salary").val(item.Salary);
+                },
+                error: function (xhr) {
+                    console.log(xhr.error)
+                }
+            })
+        })
+        $("#btnadd").click(function () {
+            let eid = $("#Eid").val();
+            let ename = $("#Ename").val();
+            let desig = $("#Desig").val();
+            let jd = $("#JoinDate").val();
+            let sal = $("#Salary").val();
+            $.ajax({
+                type: 'POST',
+                url: '/Employee/Add',
+                data: { Eid: eid, Ename: ename, Desig: desig, JoinDate: jd, Salary: sal },
+                datatype: 'application/json',
+                success: function () {
+                    alert("Record Added")
+                },
+                error: function (xhr) {
+                    console.log(xhr.error)
+                }
+            })
+        });
+        $("#btnedit").click(function () {
+            let eid = $("#Eid").val();
+            let ename = $("#Ename").val();
+            let desig = $("#Desig").val();
+            let jd = $("#JoinDate").val();
+            let sal = $("#Salary").val();
+            $.ajax({
+                type: 'PUT',
+                url: '/api/Employee',
+                data: { Eid: eid, Ename: ename, Desig: desig, JoinDate: jd, Salary: sal },
+                datatype: 'application/json',
+                success: function () {
+                    alert("Record Edited")
+                },
+                error: function (xhr) {
+                    console.log(xhr.error)
+                }
+            })
+        });
+        $("#btndelete").click(function () {
+            let eid = $("#Eid").val();
+            $.ajax({
+                type: 'Delete',
+                url: '/api/Employee/' + eid,
+                datatype: 'application/json',
+                success: function (item) {
+                    alert("Record Deleted")
+                },
+                error: function (xhr) {
+                    console.log(xhr.error)
+                }
+            })
+        })
+    });
+</script>
+<br />
+<div class="container">
+    <div class="jumbotron">
+        <div class="container">
+            <table class="table table-bordered">
+                <tr class="form-group">
+                    <td>Eid</td>
+                    <td>@Html.TextBox("Eid", null, new { @classname = "form-control" })</td>
+                </tr>
+                <tr class="form-group">
+                    <td>Ename</td>
+                    <td>@Html.TextBox("Ename", null, new { @classname = "form-control" })</td>
+                </tr>
+                <tr class="form-group">
+                    <td>Desig</td>
+                    <td>@Html.TextBox("Desig", null, new { @classname = "form-control" })</td>
+                </tr>
+                <tr class="form-group">
+                    <td>JoinDate</td>
+                    <td>@Html.TextBox("JoinDate", null, new { @classname = "form-control",type="Date" })</td>
+                </tr>
+                <tr class="form-group">
+                    <td>Salary</td>
+                    <td>@Html.TextBox("Salary", null, new { @classname = "form-control" })</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <button id="btnsearch">Search</button> &nbsp;
+                        <button id="btnadd">Add</button> &nbsp;
+
+                        <button id="btnedit">Edit</button> &nbsp;
+                        <button id="btndelete">Delete</button> &nbsp;
+
+                    </td>
+                </tr>
+            </table>
+            <table class="table table-bordered" id="t1">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Designation</th>
+                    <th>JoinDate</th>
+                    <th>Salary</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
